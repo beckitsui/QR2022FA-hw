@@ -1,0 +1,152 @@
+---
+title: "QR WEEK 5: ZONING CLUSTERS ANALYSIS"
+output: html_document
+date: '2022-10-17'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## SUMMARY
+
+National studies have indicated that in some regions of the country, such as in Massachusetts, municipalities have restricted the supply of housing through regulation, thus driving up prices of housing. The broad term “land use regulations” encompasses a variety of bylaws, ordinances and regulations that proscribe or restrict the ways in which land can be developed.
+The lack of zoning for multi-family housing is a barrier for new housing developments in the Greater Boston Area (as well as in many other U.S. cities Links to an external site.). In August 2022, the Department of Housing and Community Development of Massachusetts released Multi-Family Zoning Requirements for MBTA Communities Links to an external site.. A new Section 3A of Chapter 40A (the Zoning Act), requires MBTA communities to have at least one zoning district of reasonable size near a transit station in which multifamily housing is permitted as of right. The zoning district shall meet the following criteria:
+•	Minimum gross density of 15 units per acre
+•	Located not more than 0.5 miles from a commuter rail station, subway station, ferry terminal or bus station, if applicable
+•	No age restrictions and suitable for families with children
+ 
+In total, 175 MBTA communities are subject to the new requirements of Section 3A of the Zoning Act. 
+ 
+ Let’s use the MASS ZONING Dataset (“MASSZONING.xls”), which reflects the zoning requirements of towns/cities in the Greater Boston Area in 2005, to evaluate how difficult it is to meet the 2022 new requirements. 
+
+#### Setting up working environment
+
+```{r, echo=FALSE}
+library(xtable) # cross tabulation
+library(janitor)  # percentage tabulation
+library(tidyverse) # R packages for data science
+library(dplyr)
+library(readxl)
+library(scales) 
+library(sjPlot)
+```
+
+
+Create a new table of data from the "MASSZONG.xls"
+```{r}
+masszoning <- read_xls("MASSZONING.xls")
+mbtacommunity <- read_xls("MBTA_Communities.xls")
+```
+***
+#### Question 1: To do this task, we will first need to practice working with multiple datasets. The 175 MBTA communities are listed in the new data file “MBTA Communities.xls” MBTA Communities-1.xls Download MBTA Communities-1.xls , and we would like to indicate these communities within the 187 communities in the MASS ZONING Dataset. How many towns/communities can you find that appear in both datasets? Please save a new table only keeping the subset of MASS ZONING data that is in the MBTA Communities list.
+
+```{r}
+
+colnames(mbtacommunity)[1] <- "townname"
+sum(mbtacommunity$townname %in% masszoning$townname)
+
+newtab <- left_join(mbtacommunity, masszoning, by = "townname")
+
+```
+
+***
+#### Question 2:  Do any of the designated MBTA communities already allow multiple-family housing by right in 2005 when the MASS ZONING data were collected (variable: mfallow)? What percentage of the communities?
+
+```{r}
+sum(na.omit(newtab$mfallow %in% c(1,4,5,7)))/nrow(newtab)
+```
+***
+#### Question 3: In the MASS ZONING data collected in 2005, density requirement is measured by minimum lot area per dwelling unit (variable: unitarea). Recall that the Zoning Act in 2022 requires a minimum gross density of 15 units per acre, which can be rewritten as maximum unit size of 2904 square feet (1 acre = 43,560 sq ft). We would like to know if the mean 2005 density requirements, focusing on numeric values only, is different from the new requirement.
+#1.	Please write the null hypothesis and the alternative hypothesis for this test.
+#2.	What stats are you going to use for this test? Is this a one-tail or two-tail test?
+#3.	Are we able to reject the null hypothesis at a 1% significance level? (hint: be careful with missing values)
+
+---
+1.null hypothesis: mean 2005 density requirements the same from the new requirement;
+alternative hypothesis: mean 2005 density requirements is different from the new requirement
+2.I will be using mean, standard error, significance level, and sample size. It is a two tail test
+
+```{r}
+#3
+
+min_lot_area <- na.omit(newtab$unitarea)
+#why can't I get to use nrow(min_lot_area)???
+
+#find the sample mean
+x_hat <- mean(min_lot_area)
+x_hat
+
+#know values 
+n=100
+a <- 0.01
+mu <- 2904
+
+#find sd and se
+sd <- sd(min_lot_area)
+se <- sd/sqrt(n)
+
+#qnorm: numeric range -> can we just compare values here?
+qnorm(c(a/2, (1-a/2)), x_hat, se)
+
+
+#t value 
+t <- (x_hat - mu)/se
+t #3.98
+
+#find the critical range 
+qt(c(a/2, 1-a/2), df = n-1) 
+
+#reject?
+t > qt(c(a/2, 1-a/2), df = n-1) 
+```
+we are able to reject the null hypothesis at a 1% significance level because 2.63 < 3.98
+
+***
+
+### Question 3.4 Now, since we know that the Boston area had stringent housing supply regulations in the past few decades, we are 100% sure that density in towns/communities around Boston is no greater than 15 units per acre. How should we modify the above test to incorporate this prior knowledge?
+
+```{r}
+#We make it an one tail test
+qt(1-a, df = n-1) 
+t > qt(1-a, df = n-1) 
+```
+
+***
+
+### In 2005 when the MASS ZONING data were collected, the average town/city in MA issued 70 new private building permits. Are the number of permits allowed annually in accordance with the targeted growth rate (variable: grownum) of the MBTA communities lower than the state average? Please provide your test and your conclusion(Be careful with missing values).
+
+Null hypothesis: The number of permits allowed annually in accordance with the targeted growth rate of the MBTA communities is not lower than the state average.
+
+Alternative hypothesis: The number of permits allowed annually in accordance with the targeted growth rate of the MBTA communities is lower than the state average
+
+```{r}
+#construct a 99% confidence interval one tail test
+
+build_permit <- newtab$grownum %>% na.omit() 
+
+a_bp = 0.01
+n_bp = 32
+mu_bp = 70
+
+x_hat_bp = mean(build_permit)
+x_hat_bp
+
+sd_bp = sd(build_permit)
+sd_bp
+
+se_bp = sd_bp/sqrt(n_bp)
+se_bp
+
+#t test
+t <- (x_hat_bp - mu_bp)/se_bp
+t
+
+#critical level
+qt(a_bp, df=n-1)
+
+#reject?
+t < qt(a_bp, df=n-1)
+
+```
+Since -2.364606 < -1.330538, we fail to reject the null hypothesis with 99% confidence interval 

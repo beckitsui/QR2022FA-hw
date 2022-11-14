@@ -1,0 +1,151 @@
+---
+title: "QR WEEK 7: ZONING CLUSTERS ANALYSIS"
+output: html_document
+date: '2022-11-01'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+####Part I 
+What are different ways in which two variables might be correlated (i.e. direct causation, codetermination, etc…) ?  Please give one example for each.
+
+ANSWER: direct causation: cookies are very sweet because it contains a lot of sugar (sweetness of cookie vs amount of sugar added)
+        codetermination: cookies have high calories because it contains much butter, sugar, and flour (calorie vs amount of different ingredients' energy )
+***
+####Part II
+The output of the bivariate regression of Home Energy Rating System (HERS) Index score on annual utility cost per square foot, for our sample of 20,452 homes with HERS ratings, tells us that there is a constant of 0.634 and a coefficient of 0.006. 
+
+
+2)(a) Write the equation for this bivariate regression. 
+y = bx + k
+y = 0.006x + 0.634
+
+2(b) A one unit increase in the HERS index score is associated with how much change in the annual utility costs for a 2,000 sf home?
+2000 * 0.006 = 12
+
+
+####Part III
+##### SUMMARY
+
+We will work on this exercise with a new data set (i.e., "fema_claims_random.csv Download fema_claims_random.csv"). First, a little story about this data set: in 1968, the Congress of the US passed the National Flood Insurance Act, creating the National Flood Insurance Program (NFIP) to reduce future flood losses through flood hazard identification, manage floodplains, and provide insurance protection. In other words, the NFIP offers insurance coverage for building structures as well as for contents and personal property within the building structures to eligible and insurable properties. The data you'll be using is derived from the NFIP system of record, staged in the NFIP reporting platform, and redacted to protect policyholders' personally identifiable information.
+The original dataset has more than 2.5 million observations, but here you will use a 5% random sample stratified by the state where the property is located. That is, within each state, we took a 5% random sample of every NFIP record. Each row in the data set represents a record, and you can look at the description of each variable in the workbook Download workbook. For this homework, we will be using just a subset of variables.
+Imagine you are working for a planning research group that is trying to understand the consequences of flood on the real estate market. For your annual report, you would like to provide the reader with a general description of FEMA’s NFIP program across space and time.
+
+
+##### Setting up working environment
+
+```{r, echo=FALSE}
+library(xtable) # cross tabulation
+library(janitor)  # percentage tabulation
+library(tidyverse) # R packages for data science
+library(dplyr)
+library(readxl)
+library(scales) 
+library(sjPlot)
+```
+
+
+Create a new table of data from the "MASSZONG.xls"
+```{r}
+masszoning <- read_xls("MASSZONING.xls")
+femaclaim <- read.csv("fema_claims_random.csv")
+```
+***
+#### 1. Basic Statistics of the National Flood Insurance Program
+
+##### •	What’s the mean, median, and standard deviation of the total insurance amount paid in dollars on the building (variable: totalbuildinginsurancecoverage) and the total insurance amount paid in dollars on the contents 
+
+
+```{r}
+view(femaclaim)
+
+building_insurance <- femaclaim$totalbuildinginsurancecoverage
+content_insurance <- na.omit(femaclaim$totalcontentsinsurancecoverage)
+
+#find the sample mean
+x_hat_building <- mean(building_insurance)
+x_hat_building
+x_hat_content <- mean(content_insurance)
+x_hat_content
+
+#find the median
+median_building <- median(building_insurance)
+median_building
+median_content <- median(content_insurance)
+median_content
+
+#find sd 
+sd_building <- sd(building_insurance)
+sd_building
+sd_content <- sd(content_insurance)
+sd_content
+
+```
+The amount paid in dollars on building is significantly larger (~5 times) than the total insurance amount paid in dollars on the contents 
+
+##### •	Graph the total number of flood claims by year of loss (variable: yearofloss). That is, on the y-axis the total number of claims by year and on the x-axis the year of loss.
+
+```{r}
+ggplot(data = femaclaim, aes(yearofloss))+geom_bar()
+```
+##### •	What’s the year with the highest number of flood claims? What extreme weather event could explain this pattern?
+2005 has the highest number of flood claims due to Hurricane Katrina
+
+***
+
+#### 2. The ever-increasing cost of the National Flood Insurance Program over time: a colleague of yours suggests providing the reader with proof of whether the average total insurance amount paid in dollars on the building has changed over time. For each of the following questions, please provide the null and alternative hypotheses, the p-value of the test, and answer whether you can reject the null hypothesis at the 5% level.
+
+#####	Is the average total insurance amount paid in dollars on the building different between the year of loss in 2000 and 2010?
+
+Ho: avg insurance paid are same
+Ha: avg insurance paid are different
+
+
+```{r}
+a <- 0.05
+
+fema_subset_2000 <- femaclaim %>% filter(yearofloss == 2000) %>% select(yearofloss, totalbuildinginsurancecoverage)
+fema_subset_2010 <- femaclaim %>% filter(yearofloss == 2010) %>% select(yearofloss, totalbuildinginsurancecoverage)
+fema_subset_2020 <- femaclaim %>% filter(yearofloss == 2020) %>% select(yearofloss, totalbuildinginsurancecoverage)
+
+t.test(fema_subset_2000, fema_subset_2010)
+t.test(fema_subset_2010, fema_subset_2020)
+t.test(fema_subset_2000, fema_subset_2010)$p.value < a
+t.test(fema_subset_2010, fema_subset_2020)$p.value < a
+```
+
+Because the p values are larger than the critical value, we can not reject the null hypothesis. The average total insurance amount paid in dollars on the building has not changed over time.
+
+***
+
+##### 3. For the year of loss in 2005, you would like to show that the distribution of occupancy type (variable: occupancytype) of the filed claims is statistically different between the states (variable: state) of Louisiana (i.e., LA) and Mississippi (i.e., MS).
+
+##### •	Is the number of flood claims between the states of Louisiana and Mississippi independent of the occupancy type? Please state the null and alternative hypothesis and show whether we can reject the null at the 1% level.
+
+Ho: Number of flood claims between the states of Louisiana and Mississippi are NOT independent of the occupancy type;
+
+Ha: Number of flood claims between the states of Louisiana and Mississippi are independent of the occupancy type
+
+
+
+```{r}
+
+a = 0.01
+
+fema_subset_types <- femaclaim %>% filter(state %in% c('MS', 'LA') & yearofloss == 2005) %>% select(state, occupancytype)
+
+#inspect the new table
+head(fema_subset_types)
+
+fema_subset_types_chisqtest <- chisq.test(fema_subset_types$state, fema_subset_types$occupancytype)
+fema_subset_types_chisqtest
+```
+
+```{r}
+# p-value of our test is < 2.2e-16, which is smaller than critical value a 0.01
+fema_subset_types_chisqtest$p.value < a
+```
+
+We reject the null hypothesis. The number of flood claims between the states of Louisiana and Mississippi are independent of the occupancy type.

@@ -1,0 +1,177 @@
+---
+title: 'QR WEEK 7: ZONING CLUSTERS ANALYSIS'
+output:
+  html_document: default
+  pdf_document: default
+date: '2022-11-01'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### Part I 
+What are different ways in which two variables might be correlated (i.e. direct causation, codetermination, etc…) ?  Please give one example for each.
+
+ANSWER: direct causation: cookies are very sweet because it contains a lot of sugar (sweetness of cookie vs amount of sugar added)
+        codetermination: more butter and flour will make cookies have higher calorie (calorie vs amount of different ingredients' energy )
+        reverse causation: sweetness of cookie decreases because of the increase amount of flour used (sweetness of cookie vs amount of flour)
+        hidden variables (confounders): adding more sugar to cookie will increase the calorie and increase the sweetness
+        
+
+#### Part II
+The output of the bivariate regression of Home Energy Rating System (HERS) Index score on annual utility cost per square foot, for our sample of 20,452 homes with HERS ratings, tells us that there is a constant of 0.634 and a coefficient of 0.006. 
+
+
+2)(a) Write the equation for this bivariate regression. 
+y = bx + k
+y = 0.006x + 0.634
+
+x = Annual utility cost per square foot
+y = Index score
+
+2(b) A one unit increase in the HERS index score is associated with how much change in the annual utility costs for a 2,000 sf home?
+1 = 0.006x
+```{r}
+x=1/0.006
+x*2000
+```
+
+
+
+#### Part III
+##### SUMMARY
+
+We will continue to work on the FEMA claims data. Here is the CSV and codebook:
+
+##### Setting up working environment
+
+```{r, echo=FALSE}
+library(xtable) # cross tabulation
+library(janitor)  # percentage tabulation
+library(tidyverse) # R packages for data science
+library(dplyr)
+library(readxl)
+library(scales) 
+library(sjPlot)
+```
+
+
+Create a new table of data from the "MASSZONG.xls"
+```{r}
+femaclaim <- read.csv("fema_claims_random.csv")
+```
+***
+#### We would like to know the relationship between the total amount of building claims (variable: amountpaidonbuildingclaim) and the types of Elevation Certificate (variable: elevationcertificateindicator).
+
+1. Create a bar plot of types of certificates (hint: In order for the elevation certificate variable to be read as categorical data, you need to convert the variable as factor).
+2. Plot the histogram of the amount paid on building claims.
+3. Write out the equation for the fitted model.
+4. Plot the relationship between two variables (hint: make sure you exclude NAs before you plot).
+5. Fit the model and paste the result.
+6. In a short paragraph, describe how these two variables are associated. Make sure to explicitly discuss and interpret each coefficient (the hypothesis testing using t-stats and p-value) and R2.
+7. If you could add variables to increase the explanatory power of the model, what variable would you want to add? Why? 
+
+
+```{r}
+
+ec <-
+  femaclaim$elevationcertificateindicator %>%
+  na.omit() %>%
+  as.factor() %>%
+  plot()
+```
+2. Plot the histogram of the amount paid on building claims.
+
+```{r}
+bc <- (na.omit(femaclaim$amountpaidonbuildingclaim))
+
+femaclaim %>%
+  ggplot(aes(amountpaidonbuildingclaim, na.rm = TRUE))+
+  geom_histogram(bins = 100)+
+  xlim(0, 90000)
+```
+3. Write out the equation for the fitted model.
+buildingclaim = coefficient*elevationcertificateindicator + constant
+y = 31,322.1-9314.2(x_2  )+8661.3(x_3 )+ 6015.5(x_4) + ε
+
+
+4. Plot the relationship between two variables (hint: make sure you exclude NAs before you plot).
+```{r}
+
+cor <- femaclaim %>%
+  ggplot (aes(x=elevationcertificateindicator, y=amountpaidonbuildingclaim)) +
+  ylim(1,1050000) +
+  geom_point(color = as.factor(femaclaim$elevationcertificateindicator), alpha = 0.05, size = 4, fill = "white") 
+
+cor
+
+
+```
+
+5. Fit the model and paste the result.
+
+```{r}
+lm <- lm(amountpaidonbuildingclaim~as.factor(elevationcertificateindicator), data = femaclaim)
+summary(lm)
+```
+
+6. In a short paragraph, describe how these two variables are associated. Make sure to explicitly discuss and interpret each coefficient (the hypothesis testing using t-stats and p-value) and R2.
+
+-if the certificate indicator increase by 1, the amount paid on building claim increase by 3757.2. The baseline one expects to get (with code 1) for building claim is 3757.2. Newer certificate without BFE will give one more building claim.
+-p value and t value are smaller than 0.01 significance level, thus we can reject the null hypothesis. The amount paid on building claim and elevation certificate indicator are correlated 
+
+
+7. If you could add variables to increase the explanatory power of the model, what variable would you want to add? Why? 
+Since we are looking at elevation certificate's relationship with building claim, I would also water to add elevation difference in this model
+
+Because the p values are larger than the critical value, we can not reject the null hypothesis. The average total insurance amount paid in dollars on the building has not changed over time.
+
+***
+
+#### Now we want to see the relationship between the total amount of contents claims (variable: amountpaidoncontentsclaim) and the elevation of the lowest floor (variable: lowestfloorelevation).
+
+Plot the histogram of the total amount of insurance claims for contents.
+```{r}
+
+ggplot(femaclaim, aes(x = amountpaidoncontentsclaim, na.rm = TRUE)) + geom_histogram(bins=100) + xlim(0,100000)
+
+```
+
+Plot the histogram of the elevation of the lowest floors.
+```{r}
+#whole range
+ggplot(femaclaim, aes(x = lowestfloorelevation, na.rm = TRUE)) + geom_histogram(bins = 100) + xlim(-100,1000)
+
+#focused range with y limit
+ggplot(femaclaim, aes(x = lowestfloorelevation, na.rm = TRUE)) + geom_histogram(bins = 100) + xlim(-100,1000)+ylim(0,300)
+```
+
+Write out the equation for the fitted model.
+
+-total amount of contents claims (variable: amountpaidoncontentsclaim) = intercept + coefficient * elevation of the lowest floor (variable: lowestfloorelevation)
+
+
+Plot the relationship between two variables.
+```{r}
+femaclaim %>%
+  select(amountpaidoncontentsclaim, lowestfloorelevation) %>%
+  na.omit() %>%
+  ggplot(aes(x=lowestfloorelevation, y=amountpaidoncontentsclaim)) + geom_point()
+```
+
+Fit the model and paste the result.
+
+```{r}
+lm_2 <- lm(amountpaidoncontentsclaim~lowestfloorelevation, data = femaclaim)
+summary(lm_2)
+```
+
+In a short paragraph, describe how these two variables are associated. Make sure to explicitly discuss and interpret each coefficient (the hypothesis testing using t-stats and p-value) and R2.
+
+-The intercept is 1412, indicating that the baseline (min number of lowest floor level) gets 1412 total amount of contents claims. With one level of floor elevation change, the amount of claim increase by 1.17. 
+The p-value and t value are below significance level 0.01, hence we can reject the null hypothesis. The total amount of contents claims and elevation of the lowest floor are correlated.
+
+If you could add variables to increase the explanatory power of the model, what variable would you want to add? Why?
+
+-I would include the number of floors in the insured building, because this model concerns with the floor levels' relationship with amount of claim for contents

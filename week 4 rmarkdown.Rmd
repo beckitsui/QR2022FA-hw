@@ -1,0 +1,112 @@
+---
+title: "QR WEEK 4: ZONING CLUSTERS ANALYSIS - continued"
+output: html_document
+date: '2022-09-22'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## SUMMARY
+
+In this exercise, we will use the variable CLOPEN, which tells us the minimum percent of the parcel that must be maintained permanently as open space. This open space can be used for recreational purposes (for example, walking trails, playgrounds) or must be maintained in its natural state
+
+#### Setting up working environment
+
+```{r, echo=FALSE}
+library(xtable) # cross tabulation
+library(janitor)  # percentage tabulation
+library(tidyverse) # R packages for data science
+library(dplyr)
+library(magrittr)
+library(readxl)
+library(scales) 
+library(sjPlot)
+library(ggplot2)
+```
+
+
+Create a new table of data from the "MASSZONG.xls"
+```{r}
+masszoning <- read_xls("MASSZONING.xls")
+```
+***
+#### Question 1: 
+Exploring our variable.
+Plot a histogram of the variable CLOPEN. Does it behave like a normal distribution?
+
+```{r}
+#histogram
+open_space <- ggplot(masszoning, aes(x=clopen), na.rm = TRUE)+
+  geom_histogram(color = "dark green", fill = "green")+
+  labs(title = "Open Area Percentage Requirement Under Flexible Space Development", x = 'open space % area', y = 'number of communities')+
+  theme(panel.background = element_rect(fill = 'white', color = 'grey'),
+        panel.grid.major = element_line(color = 'lightgrey', size = .2),
+        panel.grid.minor = element_line(color = 'lightgrey', size = .1)) +
+  geom_vline(xintercept = mean(masszoning$clopen, na.rm=TRUE), linetype = "dashed", color = 'grey')
+
+open_space
+
+clopen_new <- masszoning %>%
+  pull(clopen) %>%
+  na.omit()
+
+mean(clopen_new)
+sd(clopen_new)
+```
+What’s the mean and standard deviation of the variable?
+```{r}
+#MEAN
+paste('The mean is', round(mean(clopen_new), digit = 2))
+#SD
+paste('The standard deviation is', round(sd(clopen_new), digit = 2))
+```
+***
+Now, imagine you work for a Massachusetts NGO that seeks to expand the number of walking trails. Also, imagine you don’t have access to the Massachusetts LHRD, but after weeks of going through dozens and dozens of public documents, you were able to find in a report the mean and standard deviation of the variable CLOPEN—assume it’s the same one as the one you obtained in question (a).
+ 
+After months of advocating with local and State agencies, you managed to get a brief meeting with Massachusetts’s current governor, Charlie Baker, to discuss the importance of having extra open space.
+
+***
+#### Question 2:  
+Assume that the variable CLOPEN follows a normal distribution, and remember that for this question, you only have access to the mean and standard deviation of the variable. Governor Baker begins the discussion by expressing skepticism about the low percentage of required permanently open space in Massachusetts’s parcels.
+
+Governor Baker says that at least 45% of communities in Massachusetts require a minimum of 40% of their total space as open space.
+
+Using the mean and standard deviation you found in public documents, what would be your guess of the percentage of communities complying to the minimum space requirement? 
+
+```{r}
+paste("my guess is that about", my_guess, "of communities comply with the minimum space requirement")
+```
+
+
+What would you say to Governor Baker in response? (hint: you may use the R function pnorm() to calculate the cumulative normal distribution, given a specific number, a mean, and a standard deviation).
+
+```{r}
+# pnorm, probability of normal distribution
+# pnorm(q,mean,sd)get the Cumulative Distribution Function (CDF) of a normal distribution for at value $q$ with a specific mean and sd.
+# pnorm(40,a,b)} gives the probability of getting a value of 40  or less assuming a normal distribution with mean a and sd b.
+
+#40% open space required in community
+clopen_p40 <- pnorm(40,mean(clopen_new),sd(clopen_new))
+clopen_p40
+```
+The governor looks surprised! He asks: what’s then the percentage of communities that have between 20% and 30% of required minimum open space? What would you tell him?
+```{r}
+#20~30% open space required in community
+clopen_p20_30 <-pnorm(30,mean(clopen_new),sd(clopen_new))- pnorm(20,mean(clopen_new),sd(clopen_new))
+clopen_p20_30
+```
+
+
+***
+#### Question 3: 
+Assume now with the help of Governor Baker, you have full access to the variable CLOPEN for each community in Massachusetts.
+What’s the percentage point difference between the two answers you gave to Governor Baker in problem (b) and the answers you would obtain by having access to the variable and not making any distributional assumption?
+```{r}
+clopen_p20_30 - my_guess
+clopen_p40 - my_guess
+```
+
+
+

@@ -15,19 +15,14 @@ install.packages("tidyverse")
 library(xtable) # cross tabulation
 library(janitor)  # percentage tabulation
 library(tidyverse) # R packages for data science
-library("readxl")
+library(readxl)
+library(sjPlot)
 
-
-# setting up directory
-getwd()
 # if getwd() doesn't work, then choose Session menu on the top -> Set working directory -> choose directory then choose the directory where this R file is at.
-setwd("/Users/beckyxu/Documents/MIT FA 2022/Quantitative Reasoning/Week2 HW")
+setwd("/Users/beckyxu/Documents/MIT FA 2022/11.220 Quantitative Reasoning/Week2 HW")
 
 # loading data
 masszoning <- read_xls("MASSZONING.xls")
-
-# view data
-View(masszoning)
 
 #Question 1 : minimal required plot size; histogram with binsize of 10; how do I change the grid proportions?
 mu_clparcel <- mean(masszoning$clparcel, na.rm = TRUE)
@@ -104,7 +99,6 @@ inclusion <- data.frame("Percentage" = c(percent(sum(masszoning$include == 0) / 
                         "Types" = c('No inclusionary','Optional','Mandatory','Both optional and mandatory')
                         )
 #percent(sum(masszoning$include == 1) / nrow(masszoning))
-head(inclusion)
 
 inclusion$Types <- factor(inclusion$Types, inclusion$Types[order(inclusion$Percentage, decreasing = TRUE)])
 inclusion
@@ -119,8 +113,6 @@ ggplot(inclusion, aes(x = "", y = Percentage, fill = Types))+
   scale_fill_brewer("Types",palette = 2, direction = -1) +
   labs(title = "Percentage of Inclusionary Zoning Provisions", x = '', y = '')
 
-
-inclusion %>% print(.$Types)
 
 #Question 8 : One of the variables in the survey captures whether the town allows  
 #apartments above ground-floor commercial uses (variable name: mfmixed). 
@@ -141,6 +133,19 @@ attachroomtab <- masszoning[c('accesapt','townhous')] #subsetting df
 crosstab_attachroom <- xtabs(~accesapt+townhous, data = attachroomtab)
 
 plot_xtab(attachroomtab$accesapt, attachroomtab$townhous, margin = "row", bar.pos = "stack", coord.flip = FALSE)
+
+
+filter(masszoning$incdevs =1,na.rm = TRUE) 
+df_n <- masszoning[c('incdevs','incbonus')] %>% na.omit()
+
+ggplot(df_n, aes(x = incbonus)) +
+  geom_histogram(bins = 10, color = "white", fill = "hotpink") +
+  labs(title = "Bonus Density", x = 'bonus density grant types')
+
+
+
+
+
 
 #cross tabulation
 xtabs(~nonwhite_perc_cat, data=mydata) 
@@ -169,8 +174,10 @@ pie(tbl$percent,
 
 
 
+
 df1 <- data.frame(number = c(29767,41261,20978,31473,51655,32744,64745,47836))
 ggplot(df1, aes(y=number))+geom_boxplot()
 sort(df1$number)
-median(df1$number)
-quantile(df1$number)
+mean(df1$number)
+sqrt(sum((df1$number - 40057)^2)/7)
+

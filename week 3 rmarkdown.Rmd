@@ -1,0 +1,111 @@
+---
+title: "QR WEEK 3: ZONING CLUSTERS ANALYSIS - continued"
+output: html_document
+date: '2022-09-22'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## SUMMARY
+
+Many municipalities implementing smart-growth principles do so by designated specific areas—sometimes called **clusters** with more flexible zoning. Usually, the intent is to obtain a mix of uses in a more walkable environment. Sometimes, these clusters get their own special zoning area or “planned unit development” in the zoning map. Sometimes, they are conceived as overlay districts: special areas that cross over two or more zoning districts, but in which regulated exceptions from the basic zoning guidelines are allowed. In such **clusters** or **flexible development areas**, towns usually provide incentives for developers to build at higher densities.
+
+#### Setting up working environment
+
+```{r, echo=FALSE}
+library(xtable) # cross tabulation
+library(janitor)  # percentage tabulation
+library(tidyverse) # R packages for data science
+library(dplyr)
+library("readxl")
+library(scales) 
+library(sjPlot)
+```
+
+
+Create a new table of data from the "MASSZONG.xls"
+```{r}
+masszoning <- read_xls("MASSZONING.xls")
+```
+***
+#### Question 1: 
+For the minimum lot area per dwelling unit (unitarea):
+What share of cities do not have a minimum lot area?
+What is the 5 number summary of the minimum lot area per dwelling unit?
+Represent that distribution of minimum lot area as a boxplot and as a histogram. Remember to label your figures.
+
+```{r}
+#histogram
+minimum_lot_area_per_dwelling_unit_hist <- ggplot(masszoning, aes(x=unitarea), na.rm = TRUE)+
+  geom_histogram(color = "dark gray", fill = "dark green")+
+  labs(title = "Minimum lot area per dwelling unit distribution - Histogram", x = 'lot area')+
+  theme(panel.background = element_rect(fill = 'white', color = 'grey'),
+        panel.grid.major = element_line(color = 'lightgrey', size = .2),
+        panel.grid.minor = element_line(color = 'lightgrey', size = .1))
+
+minimum_lot_area_per_dwelling_unit_hist
+
+#boxplot
+minimum_lot_area_per_dwelling_unit_box <- ggplot(masszoning, aes(y=unitarea), na.rm = TRUE)+
+  geom_boxplot(color = "dark green", outlier.colour="red", outlier.shape=8,
+                outlier.size=4)+
+  labs(title = "Minimum lot area per dwelling unit distribution - Boxplot", x = 'lot area')+
+  theme(panel.background = element_rect(fill = 'white', color = 'grey'),
+        panel.grid.major = element_line(color = 'lightgrey', size = .2),
+        panel.grid.minor = element_line(color = 'lightgrey', size = .1))
+
+minimum_lot_area_per_dwelling_unit_box
+```
+
+
+***
+#### Question 2:  
+
+For the minimum lot area per dwelling unit:
+Provide the sample mean
+Provide the variance from that sample mean
+Provide the standard deviation from that sample mean
+Provide the towns that are more than two standard deviations above the sample mean
+
+```{r}
+min_lot_area = na.omit(masszoning$unitarea)
+
+#mean
+min_lot_area_mean <- mean(min_lot_area)
+#standard deviation
+min_lot_area_sd <- sd(min_lot_area)
+#Provide the towns that are more than two standard deviations above the sample mean
+masszoning %>% filter(unitarea > (min_lot_area_mean+2*min_lot_area_sd), na.rm = TRUE) %>% .$townname
+```
+***
+#### Question 3: 
+The state of Massachusetts is considering choosing a town from this sample at random to provide a $250,000 grant to support development of affordable housing. What is the probability that grant goes to a town that has adopted a mandatory inclusionary zoning requirement (include)? What is the probability that the grant goes to a town that has adopted a voluntary inclusionary zoning requirement?  What is the probability that it goes to a town that has adopted both a mandatory and a voluntary inclusionary zoning requirement?
+```{r}
+#P(Voluntary)
+print(paste("P(Voluntary) is", round(sum(masszoning$include == 1)/nrow(masszoning), digit = 3)))
+#P(Mandatory)
+print(paste("P(Mandatory) is", round(sum(masszoning$include == 2)/nrow(masszoning), digit = 3)))
+#P(Voluntary and Mandatory)
+print(paste("P(Voluntary and Mandatory) is", round(sum(masszoning$include == 3)/nrow(masszoning), digit = 3)))
+```
+
+***
+#### Question 4: 
+
+Create a contingency table with the number of towns that have adopted a mandatory inclusionary zoning requirement by the number that have adopted a planned or targeted growth rate (growrate). Do the results suggest that these two variables have any relation to each other?
+```{r}
+new_tab <- data.frame(town_name = masszoning$townname,
+                      mandatory_inclusionary_zoning = masszoning$include,
+                      growth_rate = masszoning$growrate) %>%
+  filter(.$mandatory_inclusionary_zoning == 2)
+
+new_tab
+
+print(paste("There are only", percent(sum(new_tab$growth_rate == 1)/nrow(new_tab)), "of towns with mandatory inclusionary zoning requirement that have adopted a planned growth rate"))
+```
+
+
+
+***

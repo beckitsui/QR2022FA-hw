@@ -1,0 +1,11 @@
+name: Publish Document
+title:
+username:
+account: rpubs
+server: rpubs.com
+hostUrl: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/946354/3d368cf7971c4fedb07471e93d55f7eb
+bundleId: https://api.rpubs.com/api/v1/document/946354/3d368cf7971c4fedb07471e93d55f7eb
+url: http://rpubs.com/beckyxu_code/946354
+when: 1663890320.48478
+lastSyncTime: 1663890320.48479

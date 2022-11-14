@@ -1,0 +1,516 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={QR WEEK 7: ZONING CLUSTERS ANALYSIS},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\title{QR WEEK 7: ZONING CLUSTERS ANALYSIS}
+\author{}
+\date{\vspace{-2.5em}2022-11-01}
+
+\begin{document}
+\maketitle
+
+\hypertarget{part-i}{%
+\paragraph{Part I}\label{part-i}}
+
+What are different ways in which two variables might be correlated
+(i.e.~direct causation, codetermination, etc\ldots) ? Please give one
+example for each.
+
+ANSWER: direct causation: cookies are very sweet because it contains a
+lot of sugar (sweetness of cookie vs amount of sugar added)
+codetermination: more butter and flour will make cookies have higher
+calorie (calorie vs amount of different ingredients' energy ) reverse
+causation: sweetness of cookie decreases because of the increase amount
+of flour used (sweetness of cookie vs amount of flour) hidden variables
+(confounders): adding more sugar to cookie will increase the calorie and
+increase the sweetness
+
+\hypertarget{part-ii}{%
+\paragraph{Part II}\label{part-ii}}
+
+The output of the bivariate regression of Home Energy Rating System
+(HERS) Index score on annual utility cost per square foot, for our
+sample of 20,452 homes with HERS ratings, tells us that there is a
+constant of 0.634 and a coefficient of 0.006.
+
+2)(a) Write the equation for this bivariate regression. y = bx + k y =
+0.006x + 0.634
+
+x = Annual utility cost per square foot y = Index score
+
+2(b) A one unit increase in the HERS index score is associated with how
+much change in the annual utility costs for a 2,000 sf home? 1 = 0.006x
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{x}\OtherTok{=}\DecValTok{1}\SpecialCharTok{/}\FloatTok{0.006}
+\NormalTok{x}\SpecialCharTok{*}\DecValTok{2000}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 333333.3
+\end{verbatim}
+
+\hypertarget{part-iii}{%
+\paragraph{Part III}\label{part-iii}}
+
+\hypertarget{summary}{%
+\subparagraph{SUMMARY}\label{summary}}
+
+We will continue to work on the FEMA claims data. Here is the CSV and
+codebook:
+
+\hypertarget{setting-up-working-environment}{%
+\subparagraph{Setting up working
+environment}\label{setting-up-working-environment}}
+
+\begin{verbatim}
+## 
+## Attaching package: 'janitor'
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:stats':
+## 
+##     chisq.test, fisher.test
+\end{verbatim}
+
+\begin{verbatim}
+## -- Attaching packages --------------------------------------- tidyverse 1.3.2 --
+## v ggplot2 3.3.6     v purrr   0.3.4
+## v tibble  3.1.7     v dplyr   1.0.9
+## v tidyr   1.2.0     v stringr 1.4.0
+## v readr   2.1.2     v forcats 0.5.1
+## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()
+## 
+## Attaching package: 'scales'
+## 
+## 
+## The following object is masked from 'package:purrr':
+## 
+##     discard
+## 
+## 
+## The following object is masked from 'package:readr':
+## 
+##     col_factor
+## 
+## 
+## Install package "strengejacke" from GitHub (`devtools::install_github("strengejacke/strengejacke")`) to load all sj-packages at once!
+\end{verbatim}
+
+Create a new table of data from the ``MASSZONG.xls''
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{femaclaim }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{"fema\_claims\_random.csv"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{we-would-like-to-know-the-relationship-between-the-total-amount-of-building-claims-variable-amountpaidonbuildingclaim-and-the-types-of-elevation-certificate-variable-elevationcertificateindicator.}{%
+\paragraph{We would like to know the relationship between the total
+amount of building claims (variable: amountpaidonbuildingclaim) and the
+types of Elevation Certificate (variable:
+elevationcertificateindicator).}\label{we-would-like-to-know-the-relationship-between-the-total-amount-of-building-claims-variable-amountpaidonbuildingclaim-and-the-types-of-elevation-certificate-variable-elevationcertificateindicator.}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Create a bar plot of types of certificates (hint: In order for the
+  elevation certificate variable to be read as categorical data, you
+  need to convert the variable as factor).
+\item
+  Plot the histogram of the amount paid on building claims.
+\item
+  Write out the equation for the fitted model.
+\item
+  Plot the relationship between two variables (hint: make sure you
+  exclude NAs before you plot).
+\item
+  Fit the model and paste the result.
+\item
+  In a short paragraph, describe how these two variables are associated.
+  Make sure to explicitly discuss and interpret each coefficient (the
+  hypothesis testing using t-stats and p-value) and R2.
+\item
+  If you could add variables to increase the explanatory power of the
+  model, what variable would you want to add? Why?
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ec }\OtherTok{\textless{}{-}}
+\NormalTok{  femaclaim}\SpecialCharTok{$}\NormalTok{elevationcertificateindicator }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{na.omit}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{as.factor}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{plot}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{week-7-rmarkdown_files/figure-latex/unnamed-chunk-4-1.pdf}
+2. Plot the histogram of the amount paid on building claims.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{bc }\OtherTok{\textless{}{-}}\NormalTok{ (}\FunctionTok{na.omit}\NormalTok{(femaclaim}\SpecialCharTok{$}\NormalTok{amountpaidonbuildingclaim))}
+
+\NormalTok{femaclaim }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(amountpaidonbuildingclaim, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{))}\SpecialCharTok{+}
+  \FunctionTok{geom\_histogram}\NormalTok{(}\AttributeTok{bins =} \DecValTok{100}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{xlim}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{90000}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 42383 rows containing non-finite values (stat_bin).
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Removed 2 rows containing missing values (geom_bar).
+\end{verbatim}
+
+\includegraphics{week-7-rmarkdown_files/figure-latex/unnamed-chunk-5-1.pdf}
+3. Write out the equation for the fitted model. buildingclaim =
+coefficient*elevationcertificateindicator + constant y =
+31,322.1-9314.2(x\_2 )+8661.3(x\_3 )+ 6015.5(x\_4) + ε
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{3}
+\tightlist
+\item
+  Plot the relationship between two variables (hint: make sure you
+  exclude NAs before you plot).
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{cor }\OtherTok{\textless{}{-}}\NormalTok{ femaclaim }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{ggplot}\NormalTok{ (}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{elevationcertificateindicator, }\AttributeTok{y=}\NormalTok{amountpaidonbuildingclaim)) }\SpecialCharTok{+} \FunctionTok{ylim}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{1050000}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{color =} \StringTok{"blue"}\NormalTok{, }\AttributeTok{size=}\DecValTok{1}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.05}\NormalTok{) }
+
+\NormalTok{cor}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 106575 rows containing missing values (geom_point).
+\end{verbatim}
+
+\includegraphics{week-7-rmarkdown_files/figure-latex/unnamed-chunk-6-1.pdf}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{4}
+\tightlist
+\item
+  Fit the model and paste the result.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lm }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(amountpaidonbuildingclaim}\SpecialCharTok{\textasciitilde{}}\FunctionTok{as.factor}\NormalTok{(elevationcertificateindicator), }\AttributeTok{data =}\NormalTok{ femaclaim)}
+\FunctionTok{summary}\NormalTok{(lm)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = amountpaidonbuildingclaim ~ as.factor(elevationcertificateindicator), 
+##     data = femaclaim)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -39983 -28888 -18363  10397 972957 
+## 
+## Coefficients:
+##                                           Estimate Std. Error t value Pr(>|t|)
+## (Intercept)                                31322.1      473.8  66.110  < 2e-16
+## as.factor(elevationcertificateindicator)2  -9314.2     1115.6  -8.349  < 2e-16
+## as.factor(elevationcertificateindicator)3   8661.3      750.7  11.538  < 2e-16
+## as.factor(elevationcertificateindicator)4   6015.5     2331.5   2.580  0.00989
+##                                              
+## (Intercept)                               ***
+## as.factor(elevationcertificateindicator)2 ***
+## as.factor(elevationcertificateindicator)3 ***
+## as.factor(elevationcertificateindicator)4 ** 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 50690 on 22032 degrees of freedom
+##   (106483 observations deleted due to missingness)
+## Multiple R-squared:  0.01243,    Adjusted R-squared:  0.01229 
+## F-statistic: 92.42 on 3 and 22032 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{5}
+\tightlist
+\item
+  In a short paragraph, describe how these two variables are associated.
+  Make sure to explicitly discuss and interpret each coefficient (the
+  hypothesis testing using t-stats and p-value) and R2.
+\end{enumerate}
+
+-if the certificate indicator increase by 1, the amount paid on building
+claim increase by 3757.2. The baseline one expects to get (with code 1)
+for building claim is 3757.2. Newer certificate without BFE will give
+one more building claim. -p value and t value are smaller than 0.01
+significance level, thus we can reject the null hypothesis. The amount
+paid on building claim and elevation certificate indicator are
+correlated
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{6}
+\tightlist
+\item
+  If you could add variables to increase the explanatory power of the
+  model, what variable would you want to add? Why? Since we are looking
+  at elevation certificate's relationship with building claim, I would
+  also water to add elevation difference in this model
+\end{enumerate}
+
+Because the p values are larger than the critical value, we can not
+reject the null hypothesis. The average total insurance amount paid in
+dollars on the building has not changed over time.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{now-we-want-to-see-the-relationship-between-the-total-amount-of-contents-claims-variable-amountpaidoncontentsclaim-and-the-elevation-of-the-lowest-floor-variable-lowestfloorelevation.}{%
+\paragraph{Now we want to see the relationship between the total amount
+of contents claims (variable: amountpaidoncontentsclaim) and the
+elevation of the lowest floor (variable:
+lowestfloorelevation).}\label{now-we-want-to-see-the-relationship-between-the-total-amount-of-contents-claims-variable-amountpaidoncontentsclaim-and-the-elevation-of-the-lowest-floor-variable-lowestfloorelevation.}}
+
+Plot the histogram of the total amount of insurance claims for contents.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(femaclaim, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ amountpaidoncontentsclaim, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)) }\SpecialCharTok{+} \FunctionTok{geom\_histogram}\NormalTok{(}\AttributeTok{bins=}\DecValTok{100}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{xlim}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{100000}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 79726 rows containing non-finite values (stat_bin).
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Removed 2 rows containing missing values (geom_bar).
+\end{verbatim}
+
+\includegraphics{week-7-rmarkdown_files/figure-latex/unnamed-chunk-8-1.pdf}
+
+Plot the histogram of the elevation of the lowest floors.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#whole range}
+\FunctionTok{ggplot}\NormalTok{(femaclaim, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ lowestfloorelevation, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)) }\SpecialCharTok{+} \FunctionTok{geom\_histogram}\NormalTok{(}\AttributeTok{bins =} \DecValTok{100}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{xlim}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{100}\NormalTok{,}\DecValTok{1000}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 481 rows containing non-finite values (stat_bin).
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Removed 2 rows containing missing values (geom_bar).
+\end{verbatim}
+
+\includegraphics{week-7-rmarkdown_files/figure-latex/unnamed-chunk-9-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#focused range with y limit}
+\FunctionTok{ggplot}\NormalTok{(femaclaim, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ lowestfloorelevation, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)) }\SpecialCharTok{+} \FunctionTok{geom\_histogram}\NormalTok{(}\AttributeTok{bins =} \DecValTok{100}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{xlim}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{100}\NormalTok{,}\DecValTok{1000}\NormalTok{)}\SpecialCharTok{+}\FunctionTok{ylim}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{300}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 481 rows containing non-finite values (stat_bin).
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Removed 11 rows containing missing values (geom_bar).
+\end{verbatim}
+
+\includegraphics{week-7-rmarkdown_files/figure-latex/unnamed-chunk-9-2.pdf}
+
+Write out the equation for the fitted model.
+
+-total amount of contents claims (variable: amountpaidoncontentsclaim) =
+intercept + coefficient * elevation of the lowest floor (variable:
+lowestfloorelevation)
+
+Plot the relationship between two variables.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{femaclaim }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(amountpaidoncontentsclaim, lowestfloorelevation) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{na.omit}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{lowestfloorelevation, }\AttributeTok{y=}\NormalTok{amountpaidoncontentsclaim)) }\SpecialCharTok{+} \FunctionTok{geom\_point}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{week-7-rmarkdown_files/figure-latex/unnamed-chunk-10-1.pdf}
+
+Fit the model and paste the result.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lm\_2 }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(amountpaidoncontentsclaim}\SpecialCharTok{\textasciitilde{}}\NormalTok{lowestfloorelevation, }\AttributeTok{data =}\NormalTok{ femaclaim)}
+\FunctionTok{summary}\NormalTok{(lm\_2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = amountpaidoncontentsclaim ~ lowestfloorelevation, 
+##     data = femaclaim)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -25827 -12837  -9120   1416 485880 
+## 
+## Coefficients:
+##                       Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)          1.412e+04  1.300e+02 108.575  < 2e-16 ***
+## lowestfloorelevation 1.171e+00  3.377e-01   3.468 0.000526 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 28760 on 49130 degrees of freedom
+##   (79387 observations deleted due to missingness)
+## Multiple R-squared:  0.0002447,  Adjusted R-squared:  0.0002243 
+## F-statistic: 12.02 on 1 and 49130 DF,  p-value: 0.0005258
+\end{verbatim}
+
+In a short paragraph, describe how these two variables are associated.
+Make sure to explicitly discuss and interpret each coefficient (the
+hypothesis testing using t-stats and p-value) and R2.
+
+-The intercept is 1412, indicating that the baseline (min number of
+lowest floor level) gets 1412 total amount of contents claims. With one
+level of floor elevation change, the amount of claim increase by 1.17.
+The p-value and t value are below significance level 0.01, hence we can
+reject the null hypothesis. The total amount of contents claims and
+elevation of the lowest floor are correlated.
+
+If you could add variables to increase the explanatory power of the
+model, what variable would you want to add? Why?
+
+-I would include the number of floors in the insured building, because
+this model concerns with the floor levels' relationship with amount of
+claim for contents
+
+\end{document}

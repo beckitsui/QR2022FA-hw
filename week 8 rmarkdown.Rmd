@@ -1,0 +1,146 @@
+---
+title: 'QR WEEK 8: FEMA CLAIM - INSURANCE PAID'
+output:
+  html_document: default
+  pdf_document: default
+date: '2022-11-07'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### Part I 
+question: Identify and describe at least 4 different pitfalls to watch out for in regressions that might affect the reliability of your coefficient estimates.
+-multicollinearity: when using multivariate regression, if the independent variables are positively correlated, then the coefficient will get larger
+-multicollinearity: when using multivariate regression, if the independent variables are negatively correlated, then the coefficient will get smaller
+-overfitting: the production of an analysis that corresponds too closely or exactly to a particular set of data, and may therefore fail to fit to additional data or predict future observations reliably
+-extrapolation: predict beyond the "scope of the model" when one uses an estimated regression equation to predict a new response for values not in the range of the sample data used to determine the estimated regression equation.
+-excluding Important Predictor Variables: the linear association between two variables ignoring other relevant variables can differ both in magnitude and direction from the association that controls for other relevant variables.
+
+#### Part II
+question: Why would you use a logistic regression or logit model instead of a linear regression?
+answer: Linear regression is used to predict the continuous dependent variable. Logistic Regression is used to predict the categorical dependent variable (ex: yes or no, number of hours...) 
+
+#### Part III
+##### SUMMARY
+
+We will continue to work on the FEMA claims data. Here is the CSV and codebook:
+
+##### Setting up working environment
+
+```{r, echo=FALSE}
+library(xtable) # cross tabulation
+library(janitor)  # percentage tabulation
+library(tidyverse) # R packages for data science
+library(dplyr)
+library(readxl)
+library(scales) 
+library(sjPlot)
+```
+
+
+Create a new table of data from the "MASSZONG.xls"
+```{r}
+femaclaim <- read_csv("~/Documents/GitHub/QR2022FA/county_claims_2016_2020.csv")
+femaclaim_1 <- read_csv("~/Documents/GitHub/QR2022FA/county_characteristics_2016_2020.csv")
+#View(femaclaim)
+#View(femaclaim_1)
+```
+***
+####Step 1: Data preparation
+
+Import both datasets to R. Create a new dataset joining the county claims dataset to the county characteristics dataset. (Hint: from the library, tidyverse, use the function inner_join() and the FIPS code column to join both datasets)
+
+```{r}
+
+femajoined <- inner_join(femaclaim,femaclaim_1,by="countycode")
+#View(femajoined)
+
+```
+***
+
+####Step 2: Explore Relationships between variables
+
+2. Create a scatter plot between the total insurance paid (variable: total_insurance) and the county median property value (variable: median_value). Remember to label your y-axis, x-axis, and provide a title to your graph. What’s the relationship between both variables?
+
+```{r}
+
+femajoined %>%
+  ggplot(aes(x=median_value, y=total_insurance, color=total_insurance/median_value))+
+  geom_point(size=2,alpha=0.1) +
+  geom_smooth(method = lm, color="pink", alpha=.3)+
+  labs(title="Total insurance paid and the county median property value")+
+  xlab("median property value") +
+  ylab("total insurance paid")
+
+```
+answer: There is a positive correlation between median property value and total insurance amount paid.
+
+***
+
+3.Regress the total insurance paid on the median property value. In a short paragraph, describe how these two variables are associated. Make sure to discuss and interpret each coefficient and R2
+
+```{r}
+
+cor_value_insurance <- lm(total_insurance~median_value,data=femajoined)
+summary(cor_value_insurance)
+
+```
+answer: The regression showed that there is a positive correlation between median property value and total insurance amount paid. When the median value increase by 1, the total insurance paid increase by 0.496. Assuming the median value is 0, the insurance paid is 1.223e+05.The R-squared is 0.1421, meaning that about 14% of the data can be explained by the model. 
+
+***
+
+4. Now, create two new variables, each containing the natural logarithm of two existing variables: (a) total insurance paid and (b) the median property value.
+
+```{r}
+log_insurance_paid <- log(femajoined$total_insurance)
+log_median_value <- log(femajoined$median_value)
+
+summary(log_insurance_paid)
+summary(log_median_value)
+
+```
+
+4.1) Create a scatter plot of these two log scale variables. Discuss the similarity and differences between this plot and the plot from question (2).
+answer: The graph after log transformation better depict the positive correlation between median property value and total insurance amount paid than the graph in question (2). The data points in this graph are more evenly distributed along the fitted line, and you can understand the correlation by eye. Whereas you can hardly understand the correlation by eyes in the graph in question 2. 
+
+4.2) Add the line of best fit with confidence intervals at the 95% level. Remember to label your y-axis, x-axis, and provide a title to your graph.
+```{r}
+data_frame(log_median_value, log_insurance_paid) %>%
+  ggplot(aes(x=log_median_value, y=log_insurance_paid, color=log_insurance_paid/log_median_value))+
+    geom_point(size=2,alpha=0.2) +
+    geom_smooth(method = lm, color="pink", alpha=.3, level=0.95)+
+    labs(title="Total insurance paid and the county median property value in log")+
+    xlab("log median property value") +
+    ylab("log total insurance paid")
+```
+***
+5. Regress the natural logarithm of the total insurance paid on the natural logarithm of the median property value. In a short paragraph, describe how these two variables are associated. Make sure to discuss and interpret each coefficient and R2. In addition, please discuss the confidence interval of the coefficient for median property value and how it is presented visually in the plot from 4.2.
+```{r}
+summary(lm(log_insurance_paid~log_median_value))
+```
+answer: The regression showed that there is a positive correlation between log median property value and log total insurance amount paid. When the median value increase by 1%, the total insurance paid increase by 0.57494%. Assuming the median value is 0, the insurance paid is 5.22639. The R-squared is 0.2048, meaning that about 20% of the data can be explained by the model. 
+Confidence interval of the coefficient for median property value is presented through the fitted line's surrounding grey bands in the graphic. (? check with TA)
+
+
+***
+####Step 3. Make better predictions
+
+We will create a multivariate regression to predict the total insurance paid:
+
+6. Regress the natural logarithm of the total insurance paid on the natural logarithm of the median property value and the percentage of Black residents in the county. In a short paragraph, describe how these variables are associated. Make sure to discuss and interpret each coefficient and R2.
+```{r}
+summary(lm(log_insurance_paid ~ log_median_value+femajoined$black_percentage))
+```
+The regression showed that there is a positive correlation between log median property value and log total insurance amount paid and black_percentage. 
+When the median value increase by 1%, the total insurance paid increase by 0.6043657%. Assuming the median value is 0, the insurance paid is 4.8212783. When black_percentage increase by 1%, insurance paid increase by 0.0054425%. The R-squared is 0.2222, meaning that about 22% of the data can be explained by the model. 
+
+***
+7. Please compare this multivariate model with the one you did in question (5). Does the coefficient for median property value change? And why? Does the R2 change, and why?
+-Intercept Q5 is 5.22639, Intercept Q6 is 4.8212783. There is an increase of value by adding another variable
+-Correlation coefficient for log_median_value in Q5 is 0.57494; Correlation coefficient for log_median_value in Q6 is 0.6043657. The log_median_value has higher coefficient now because black_percentage in the model augmented the correlation.
+
+***
+8. If you could add variables to increase the explanatory power of the model, what variable would you want to add? Why?
+answer: adding too many variable to a model may or may not be the best approach to understand each element's impact on the outcome (y). However, I am also interested in seeing the median_year_structure_built in relationship to the insurance paid. The H0: correlation between year built and insurance paid = 0. Ha: correlation is not 0 (perhaps)
